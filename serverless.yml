@@ -1,0 +1,49 @@
+service: solution-evaluator
+
+plugins:
+  - serverless-python-requirements
+  - serverless-dotenv-plugin
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    layer:
+      name: python-deps
+      description: Python dependencies for solution evaluator
+    noDeploy:
+      - pytest
+      - pytest-mock
+      - pytest-cov
+
+provider:
+  name: aws
+  runtime: python3.10
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  environment:
+    GOOGLE_API_KEY: ${env:GOOGLE_API_KEY}
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!package*.json'
+    - '!requirements.txt'
+    - '!venv/**'
+    - '!.git/**'
+    - '!.gitignore'
+    - '!README.md'
+    - '!.env'
+    - '!tests/**'
+
+functions:
+  evaluate:
+    handler: handler.evaluate
+    events:
+      - http:
+          path: /evaluate
+          method: post
+          cors: true
+    timeout: 30
+    memorySize: 1024
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
