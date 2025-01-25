@@ -1,30 +1,33 @@
 import json
 import os
+
 import google.generativeai as genai
 
+
 def evaluate(event, context):
+    """
+    Evaluate the solutions for the given questions using Generative AI.
+    """
     try:
         # Parse request body
-        body = json.loads(event['body'])
-        
+        body = json.loads(event["body"])
+
         # Validate input
-        if 'questions' not in body or 'solutions' not in body:
+        if "questions" not in body or "solutions" not in body:
             return {
-                'statusCode': 400,
-                'body': json.dumps({
-                    'error': 'Missing required fields: questions and solutions'
-                })
+                "statusCode": 400,
+                "body": json.dumps({"error": "Missing required fields: questions and solutions"}),
             }
 
-        questions = body['questions']  # List of dictionaries with 'description' key
-        solutions = body['solutions']  # List of lists containing solution strings
+        questions = body["questions"]  # List of dictionaries with 'description' key
+        solutions = body["solutions"]  # List of lists containing solution strings
 
         # Configure Google AI
-        genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
-        
+        genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+
         # Initialize model
-        model = genai.GenerativeModel('gemini-pro')
-        
+        model = genai.GenerativeModel("gemini-pro")
+
         results = []
         for q, s in zip(questions, solutions):
             prompt = f"""
@@ -127,29 +130,24 @@ def evaluate(event, context):
             4. For each solution, provide **scores only**, separated by commas, in the exact order the solutions are provided. Do not include explanations, comments, or additional information.
 
             """
-            
+
             response = model.generate_content(prompt)
-            results.append({
-                # 'question_description': q['description'],
-                # 'submitted_solution': s[0],
-                'evaluation': response.text
-            })
+            results.append(
+                {
+                    # 'question_description': q['description'],
+                    # 'submitted_solution': s[0],
+                    "evaluation": response.text
+                }
+            )
 
         return {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True,
+            "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Credentials": True,
             },
-            'body': json.dumps({
-                'results': results
-            })
+            "body": json.dumps({"results": results}),
         }
-    
+
     except Exception as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({
-                'error': str(e)
-            })
-        }
+        return {"statusCode": 500, "body": json.dumps({"error": str(e)})}

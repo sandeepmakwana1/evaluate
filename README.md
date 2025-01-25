@@ -58,3 +58,18 @@ A serverless application that evaluates coding solutions using Google's Generati
    ```
 
 2. After deployment, note the service endpoint URL provided in the output.
+
+## Pre-commit Hooks
+
+Install pre-commit hooks:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+Run pre-commit hooks:
+
+```bash
+pre-commit run --all-files
+```
