@@ -28,5 +28,33 @@ A serverless application that evaluates coding solutions using Google's Generati
   - IAM role with Lambda execution permissions
   - API Gateway permissions
   - CloudWatch logs access
-- Serverless Framework (v4.0 or later) for infrastructure management
+- Serverless Framework (v3.0 or later) for infrastructure management
 - Google AI API key with PaLM API access enabled
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/solution-evaluator.git
+   cd solution-evaluator
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   - Create a `.env` file and add your Google API key:
+     ```
+     GOOGLE_API_KEY=your_google_api_key
+     ```
+
+## Deployment
+
+1. Deploy the application using the Serverless Framework:
+   ```bash
+   serverless deploy
+   ```
+
+2. After deployment, note the service endpoint URL provided in the output.
